@@ -4,6 +4,6 @@ require "minitest/autorun"
 
 describe "Bundler bug" do
   it "doesn't load minitest" do
-    true.must_equal(false)
+    true.must_equal(true)
   end
 end

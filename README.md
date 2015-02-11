@@ -1,31 +1,40 @@
 # Minitest::Bundler::Bug
 
-TODO: Write a gem description
+A proof of concept of a bug in bundler
 
-## Installation
+### Overview
+I am attempting to publish a gem and have come across a problem. While minitest should be available, I am forced to declare it as a development dependency in the gem spec if I run `bundle exec rake test` as opposed to `rake test`. When running `rake test` the load path is able to bring in the minitest bundled gem.
 
-Add this line to your application's Gemfile:
+I have posted my [bundler env to a public gist](https://gist.github.com/ebenoist/2b54075341f8fc45a80e) and have created a [test project](https://github.com/ebenoist/minitest-bundler-bug) that displays the bug.
 
-```ruby
-gem 'minitest-bundler-bug'
+#### Without Bundler
+```BASH
+[master+][~/development/minitest-bundler-bug]❥ rake test
+/Users/ebenoist/.rbenv/versions/2.1.2/bin/ruby -I"lib:lib" -I"/Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib" "/Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib/rake/rake_test_loader.rb" "test/bug_test.rb"
+Run options: --seed 39836
+
+# Running:
+
+.
+
+Finished in 0.001396s, 716.3324 runs/s, 716.3324 assertions/s.
+
+1 runs, 1 assertions, 0 failures, 0 errors, 0 skips
 ```
 
-And then execute:
+### With Bundler
+```BASH
+[master][~/development/minitest-bundler-bug]❥ bundle exec rake test
+/Users/ebenoist/.rbenv/versions/2.1.2/bin/ruby -I"lib:lib" -I"/Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib" "/Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib/rake/rake_test_loader.rb" "test/bug_test.rb"
+/Users/ebenoist/development/minitest-bundler-bug/test/bug_test.rb:1:in `require': cannot load such file -- minitest (LoadError)
+  from /Users/ebenoist/development/minitest-bundler-bug/test/bug_test.rb:1:in `<top (required)>'
+  from /Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib/rake/rake_test_loader.rb:15:in `require'
+  from /Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib/rake/rake_test_loader.rb:15:in `block in <main>'
+  from /Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib/rake/rake_test_loader.rb:4:in `select'
+  from /Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib/rake/rake_test_loader.rb:4:in `<main>'
+rake aborted!
+Command failed with status (1): [ruby -I"lib:lib" -I"/Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib" "/Users/ebenoist/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/rake-10.4.2/lib/rake/rake_test_loader.rb" "test/bug_test.rb" ]
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install minitest-bundler-bug
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it ( https://github.com/[my-github-username]/minitest-bundler-bug/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+Tasks: TOP => test
+(See full trace by running task with --trace)
+```
